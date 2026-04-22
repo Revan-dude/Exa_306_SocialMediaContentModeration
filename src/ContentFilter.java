@@ -18,21 +18,36 @@ public class ContentFilter implements Runnable{
             Post post = rawBuffer.take();
             process(post);
         }
+
+        System.out.println("Filter is shutting down...");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        printReport();
     }
 
     private void process(Post post) {
         System.out.println("Filter checks: " + post + ".");
 
-        if(post.isPoisonPill()) {
-            poisonPillCount++;
-        }
-        else if(post.needsManualReview()) {
-            forwardedToReview++;
-            reviewBuffer.put(post);
-            System.out.println("FILTER -> critical post, forwarding to moderator.");
+        if (!post.isPoisonPill()) {
+            if (post.needsManualReview()) {
+                forwardedToReview++;
+                reviewBuffer.put(post);
+                System.out.println("FILTER -> critical post, forwarding to moderator.");
+            } else {
+                autoApproved++;
+                System.out.println("FILTER -> automatically approved.");
+            }
+
+
         } else {
-            autoApproved++;
-            System.out.println("FILTER -> automatically approved.");
+            poisonPillCount++;
+
+            if (poisonPillCount == producerCount) {
+                reviewBuffer.put(post);
+            }
         }
     }
 
@@ -40,7 +55,7 @@ public class ContentFilter implements Runnable{
         System.out.printf("""
                 === FILTER STATISTICS ===
                 Automatically approved: %d
-                Forwarded to moderator: %d
+                Forwarded to moderator: %d%n
                 """,
                 autoApproved,
                 forwardedToReview);

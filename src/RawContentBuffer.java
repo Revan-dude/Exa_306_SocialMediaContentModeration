@@ -22,7 +22,9 @@ public class RawContentBuffer {
         }
 
         queue.add(post);
-        System.out.println(Thread.currentThread().getName() + " -> RAW in: " + post);
+        if(!post.isPoisonPill()) {
+            System.out.println(Thread.currentThread().getName() + " -> RAW in: " + post);
+        }
         notifyAll();
     }
 

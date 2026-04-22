@@ -21,7 +21,9 @@ public class ReviewBuffer {
         }
 
         queue.add(post);
-        System.out.println(Thread.currentThread().getName() + " -> REVIEW in: " + post);
+        if (!post.isPoisonPill()) {
+            System.out.println(Thread.currentThread().getName() + " -> REVIEW in: " + post);
+        }
         notifyAll();
     }
 
@@ -36,7 +38,9 @@ public class ReviewBuffer {
         }
 
         Post post = queue.remove();
-        System.out.println(Thread.currentThread().getName() + " -> REVIEW in: " + post);
+        if(!post.isPoisonPill()){
+            System.out.println(Thread.currentThread().getName() + " -> REVIEW in: " + post);
+        }
         notifyAll();
         return post;
     }

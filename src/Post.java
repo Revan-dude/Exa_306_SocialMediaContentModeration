@@ -21,6 +21,12 @@ public class Post {
         return String.format("Post {id = %d, username = %s, text = %s, toxicScore = %d}",
                 id, username, text, toxicScore);
     }
+
+    public static Post poisonPill() {
+        Post post = new Post(0, "The pill...", "Pillmaster", 0);
+        post.poisonPill = true;
+        return post;
+    }
     public int getId() {
         return id;
     }
